@@ -4,6 +4,7 @@ import android.content.Context;
 import android.transition.ChangeBounds;
 import android.transition.ChangeImageTransform;
 import android.transition.ChangeTransform;
+import android.transition.Explode;
 import android.transition.TransitionSet;
 import android.util.AttributeSet;
 
@@ -25,7 +26,9 @@ public class DetailsTransition extends TransitionSet {
 
     private void init() {
         setOrdering(ORDERING_TOGETHER);
+        setDuration(2000);
         addTransition(new ChangeBounds()).
+                addTransition(new Explode()).
                 addTransition(new ChangeTransform()).
                 addTransition(new ChangeImageTransform());
     }

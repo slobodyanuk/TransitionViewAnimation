@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar_actionbar"
+    android:layout_width="match_parent"
+    android:layout_height="76dp"
+    android:minHeight="76dp"
+    android:background="@color/colorPrimary"
+    app:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+
+    <RelativeLayout
+        android:id="@+id/menu_list"
+        android:layout_width="50dp"
+        android:clickable="true"
+        android:visibility="gone"
+        android:background="?attr/actionBarItemBackground"
+        android:layout_height="match_parent"
+        android:layout_gravity="right" >
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:scaleType="center"
+            android:src="@android:drawable/ic_menu_sort_by_size"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.Toolbar>

@@ -1,15 +1,26 @@
 package com.skysoft.slobodyanuk.transitionviewanimation;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.util.Range;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.thefinestartist.utils.ui.DisplayUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,10 +35,34 @@ public class DetailsFragment extends Fragment {
 
     @BindView(R.id.root)
     LinearLayout mRoot;
-    private float dy;
+    @BindView(R.id.image_container)
+    RelativeLayout mImageContainer;
+    @BindView(R.id.image)
+    ImageView mImage;
 
-    public static DetailsFragment newInstance() {
+    private String url;
+
+    private ObjectAnimator mRotationAnimation;
+    private ObjectAnimator mMoveAnimation;
+    private ObjectAnimator mAlphaAnimation;
+    private AnimatorSet animationSet;
+
+    private static final int MAX_CLICK_DURATION = 150;
+    private static final int MAX_CLICK_DISTANCE = 5;
+
+    private long pressStartTime;
+    private float pressedX;
+    private float pressedY;
+    private float prevY = 0;
+    private float nextY = 0;
+    private int startTime = 0;
+
+    private boolean firstClick = true;
+
+
+    public static DetailsFragment newInstance(String url) {
         Bundle args = new Bundle();
+        args.putString("url", url);
         DetailsFragment fragment = new DetailsFragment();
         fragment.setArguments(args);
         return fragment;
@@ -41,38 +76,92 @@ public class DetailsFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        final FrameLayout.LayoutParams parms = (FrameLayout.LayoutParams) mRoot.getLayoutParams();
-        final int startY = (int) mRoot.getY();
-        final Range<Integer> range = Range.create(0, 280);
-        final int halfSwipe = (int) (range.getUpper() * 0.7);
+        ActivityCompat.postponeEnterTransition(getActivity());
+        ActivityCompat.startPostponedEnterTransition(getActivity());
+        url = getArguments().getString("url");
+        animationSet = new AnimatorSet();
+
+        Glide.with(this)
+                .load(url)
+                .asBitmap()
+                .fitCenter()
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        mImage.setImageBitmap(resource);
+                    }
+                });
+
+        mImageContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+            public void onGlobalLayout() {
+                int y = mImageContainer.getTop();
+                mMoveAnimation = ObjectAnimator.ofFloat(mImageContainer, "y", y, DisplayUtil.getHeight() * 0.55f).setDuration(1000);
+                mRotationAnimation = ObjectAnimator.ofFloat(mImageContainer, "rotationX", 0, -25).setDuration(1000);
+                mAlphaAnimation = ObjectAnimator.ofFloat(mImageContainer, "alpha", 1f, 0.5f).setDuration(1000);
+                animationSet.playTogether(mRotationAnimation, mMoveAnimation, mAlphaAnimation);
+                mImageContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+
         mRoot.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
+
+            public boolean onTouch(View arg0, MotionEvent event) {
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        dy = event.getRawY() - parms.topMargin;
+                        pressStartTime = System.currentTimeMillis();
+                        pressedX = event.getX();
+                        pressedY = event.getY();
+                        firstClick = true;
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        float y = event.getRawY();
-                        parms.topMargin = (int) (y - dy);
-                        if (range.contains(parms.topMargin)) {
-                            mRoot.setLayoutParams(parms);
+                        nextY = event.getY();
+                        long pressDuration = System.currentTimeMillis() - pressStartTime;
+                        if (firstClick) {
+                            if (nextY < pressedY) {
+                                return true;
+                            }
                         }
+                        if (pressDuration > MAX_CLICK_DURATION &&
+                                distance(pressedX, pressedY, event.getX(), event.getY()) > MAX_CLICK_DISTANCE) {
+                            firstClick = false;
+                            for (Animator a : animationSet.getChildAnimations()) {
+                                ((ObjectAnimator) a).setCurrentPlayTime(startTime);
+                            }
+                        }
+                        startTime = (int) (((1000) * event.getY() + pressedY) / DisplayUtil.getHeight());
+                        prevY = nextY;
                         break;
                     case MotionEvent.ACTION_UP:
-                        if (parms.topMargin >= halfSwipe) {
-                            getActivity().onBackPressed();
+                        if ((float) mMoveAnimation.getCurrentPlayTime() <= 750) {
+                            startTime = 0;
+                            for (Animator a : animationSet.getChildAnimations()) {
+                                ((ObjectAnimator) a).setCurrentPlayTime(startTime);
+                            }
+                            firstClick = true;
                         } else {
-                            parms.topMargin = startY;
-                            mRoot.setLayoutParams(parms);
+                            if (!firstClick) {
+                                getActivity().onBackPressed();
+                            }
                         }
                         break;
                 }
                 return true;
             }
         });
+    }
+
+    private float distance(float x1, float y1, float x2, float y2) {
+        float dx = x1 - x2;
+        float dy = y1 - y2;
+        float distanceInPx = (float) Math.sqrt(dx * dx + dy * dy);
+        return pxToDp(distanceInPx);
+    }
+
+    private float pxToDp(float px) {
+        return px / getResources().getDisplayMetrics().density;
     }
 
     @Override
