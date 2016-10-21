@@ -1,4 +1,4 @@
-package com.skysoft.slobodyanuk.transitionviewanimation;
+package com.skysoft.slobodyanuk.transitionviewanimation.util;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -28,9 +28,9 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-            int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-            int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
-            return makeMovementFlags(dragFlags, swipeFlags);
+        int dragFlags = 0;
+        int swipeFlags = ItemTouchHelper.LEFT;
+        return makeMovementFlags(dragFlags, swipeFlags);
     }
 
     @Override
@@ -41,9 +41,11 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
         mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+        mAdapter.onClockShow(direction);
     }
 
     public interface ItemTouch {
+        void onClockShow(int direction);
 
         void onItemDismiss(int position);
     }

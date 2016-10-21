@@ -1,4 +1,4 @@
-package com.skysoft.slobodyanuk.transitionviewanimation;
+package com.skysoft.slobodyanuk.transitionviewanimation.view.component;
 
 import android.content.Context;
 import android.util.AttributeSet;

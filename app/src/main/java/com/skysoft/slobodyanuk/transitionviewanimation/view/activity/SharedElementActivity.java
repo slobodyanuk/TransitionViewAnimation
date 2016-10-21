@@ -1,4 +1,4 @@
-package com.skysoft.slobodyanuk.transitionviewanimation;
+package com.skysoft.slobodyanuk.transitionviewanimation.view.activity;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,6 +9,9 @@ import android.transition.ChangeImageTransform;
 import android.transition.ChangeTransform;
 import android.transition.TransitionSet;
 import android.view.WindowManager;
+
+import com.skysoft.slobodyanuk.transitionviewanimation.view.fragment.DetailsFragment;
+import com.skysoft.slobodyanuk.transitionviewanimation.R;
 
 import butterknife.ButterKnife;
 

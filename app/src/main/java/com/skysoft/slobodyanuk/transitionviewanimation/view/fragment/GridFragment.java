@@ -1,4 +1,4 @@
-package com.skysoft.slobodyanuk.transitionviewanimation;
+package com.skysoft.slobodyanuk.transitionviewanimation.view.fragment;
 
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
@@ -12,6 +12,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.skysoft.slobodyanuk.transitionviewanimation.view.adapter.GridAdapter;
+import com.skysoft.slobodyanuk.transitionviewanimation.view.component.ItemOffsetDecoration;
+import com.skysoft.slobodyanuk.transitionviewanimation.R;
+import com.skysoft.slobodyanuk.transitionviewanimation.view.activity.SharedElementActivity;
+import com.skysoft.slobodyanuk.transitionviewanimation.view.component.SquareView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

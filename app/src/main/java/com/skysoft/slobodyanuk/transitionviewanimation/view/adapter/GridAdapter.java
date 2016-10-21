@@ -1,4 +1,4 @@
-package com.skysoft.slobodyanuk.transitionviewanimation;
+package com.skysoft.slobodyanuk.transitionviewanimation.view.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +8,9 @@ import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.skysoft.slobodyanuk.transitionviewanimation.R;
+import com.skysoft.slobodyanuk.transitionviewanimation.view.component.SquareView;
+import com.skysoft.slobodyanuk.transitionviewanimation.view.fragment.GridFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

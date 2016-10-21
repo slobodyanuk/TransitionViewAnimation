@@ -1,4 +1,4 @@
-package com.skysoft.slobodyanuk.transitionviewanimation;
+package com.skysoft.slobodyanuk.transitionviewanimation.view.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -6,6 +6,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
+
+import com.skysoft.slobodyanuk.transitionviewanimation.view.fragment.ListFragment;
+import com.skysoft.slobodyanuk.transitionviewanimation.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

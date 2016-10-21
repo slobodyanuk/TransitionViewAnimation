@@ -1,14 +1,17 @@
-package com.skysoft.slobodyanuk.transitionviewanimation;
+package com.skysoft.slobodyanuk.transitionviewanimation.view.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.skysoft.slobodyanuk.transitionviewanimation.R;
+import com.skysoft.slobodyanuk.transitionviewanimation.view.adapter.ListAdapter;
+import com.skysoft.slobodyanuk.transitionviewanimation.view.component.DividerItemDecoration;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -17,7 +20,7 @@ import butterknife.Unbinder;
 /**
  * Created by Serhii Slobodyanuk on 19.09.2016.
  */
-public class ListFragment extends Fragment implements ListAdapter.ItemListener{
+public class ListFragment extends Fragment implements ListAdapter.ItemListener {
 
     @BindView(R.id.recycler)
     RecyclerView mRecyclerView;
@@ -46,9 +49,10 @@ public class ListFragment extends Fragment implements ListAdapter.ItemListener{
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null, false,false));
         mRecyclerView.setLayoutManager(manager);
-        ItemTouchHelperCallback mSwipeCallback = new ItemTouchHelperCallback(adapter, true);
-        ItemTouchHelper touchHelper = new ItemTouchHelper(mSwipeCallback);
-        touchHelper.attachToRecyclerView(mRecyclerView);
+//        ItemTouchHelperCallback mSwipeCallback = new ItemTouchHelperCallback(adapter, true);
+//        ItemTouchHelper touchHelper = new ItemTouchHelper(mSwipeCallback);
+//        touchHelper.attachToRecyclerView(mRecyclerView);
+
     }
 
     @Override

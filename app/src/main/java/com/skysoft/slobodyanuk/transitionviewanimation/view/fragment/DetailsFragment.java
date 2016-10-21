@@ -1,4 +1,4 @@
-package com.skysoft.slobodyanuk.transitionviewanimation;
+package com.skysoft.slobodyanuk.transitionviewanimation.view.fragment;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -20,6 +20,8 @@ import android.widget.RelativeLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.skysoft.slobodyanuk.transitionviewanimation.R;
+import com.skysoft.slobodyanuk.transitionviewanimation.util.TouchViewUtil;
 import com.thefinestartist.utils.ui.DisplayUtil;
 
 import butterknife.BindView;
@@ -125,7 +127,7 @@ public class DetailsFragment extends Fragment {
                             }
                         }
                         if (pressDuration > MAX_CLICK_DURATION &&
-                                distance(pressedX, pressedY, event.getX(), event.getY()) > MAX_CLICK_DISTANCE) {
+                                TouchViewUtil.distance(getResources(), pressedX, pressedY, event.getX(), event.getY()) > MAX_CLICK_DISTANCE) {
                             firstClick = false;
                             for (Animator a : animationSet.getChildAnimations()) {
                                 ((ObjectAnimator) a).setCurrentPlayTime(startTime);
@@ -153,16 +155,6 @@ public class DetailsFragment extends Fragment {
         });
     }
 
-    private float distance(float x1, float y1, float x2, float y2) {
-        float dx = x1 - x2;
-        float dy = y1 - y2;
-        float distanceInPx = (float) Math.sqrt(dx * dx + dy * dy);
-        return pxToDp(distanceInPx);
-    }
-
-    private float pxToDp(float px) {
-        return px / getResources().getDisplayMetrics().density;
-    }
 
     @Override
     public void onDestroyView() {
