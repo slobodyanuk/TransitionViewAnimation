@@ -5,6 +5,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -60,6 +61,8 @@ public class DetailsFragment extends Fragment {
     private int startTime = 0;
 
     private boolean firstClick = true;
+    private int containerY;
+    private Handler handler;
 
 
     public static DetailsFragment newInstance(String url) {
@@ -89,6 +92,7 @@ public class DetailsFragment extends Fragment {
                 .load(url)
                 .asBitmap()
                 .fitCenter()
+                .dontTransform()
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -99,12 +103,35 @@ public class DetailsFragment extends Fragment {
         mImageContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
             public void onGlobalLayout() {
-                int y = mImageContainer.getTop();
-                mMoveAnimation = ObjectAnimator.ofFloat(mImageContainer, "y", y, DisplayUtil.getHeight() * 0.55f).setDuration(1000);
+                containerY = mImageContainer.getTop();
+                mMoveAnimation = ObjectAnimator.ofFloat(mImageContainer, "y", containerY, DisplayUtil.getHeight() * 0.55f).setDuration(1000);
                 mRotationAnimation = ObjectAnimator.ofFloat(mImageContainer, "rotationX", 0, -25).setDuration(1000);
                 mAlphaAnimation = ObjectAnimator.ofFloat(mImageContainer, "alpha", 1f, 0.5f).setDuration(1000);
                 animationSet.playTogether(mRotationAnimation, mMoveAnimation, mAlphaAnimation);
                 mImageContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mMoveAnimation.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        if (handler != null){
+                            handler.removeCallbacksAndMessages(null);
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
             }
         });
 
@@ -127,24 +154,34 @@ public class DetailsFragment extends Fragment {
                             }
                         }
                         if (pressDuration > MAX_CLICK_DURATION &&
-                                TouchViewUtil.distance(getResources(), pressedX, pressedY, event.getX(), event.getY()) > MAX_CLICK_DISTANCE) {
+                                TouchViewUtil.distanceY(pressedY, event.getY()) > MAX_CLICK_DISTANCE) {
                             firstClick = false;
+                            if (handler != null){
+                                handler.removeCallbacksAndMessages(null);
+                            }
                             for (Animator a : animationSet.getChildAnimations()) {
                                 ((ObjectAnimator) a).setCurrentPlayTime(startTime);
                             }
                         }
-                        startTime = (int) (((1000) * event.getY() + pressedY) / DisplayUtil.getHeight());
+                        if (pressedY > containerY) {
+                            mMoveAnimation.setDuration(700);
+                            startTime = (int) ((1000 * (event.getY() - pressedY)) / DisplayUtil.getHeight());
+                        } else {
+                            startTime = (int) (((1000) * event.getY()) / DisplayUtil.getHeight());
+                        }
+
                         prevY = nextY;
                         break;
                     case MotionEvent.ACTION_UP:
-                        if ((float) mMoveAnimation.getCurrentPlayTime() <= 750) {
-                            startTime = 0;
-                            for (Animator a : animationSet.getChildAnimations()) {
-                                ((ObjectAnimator) a).setCurrentPlayTime(startTime);
-                            }
+                        if ((float) mMoveAnimation.getCurrentPlayTime() <= mMoveAnimation.getDuration() * 0.70f) {
+                            reverseAnimation();
                             firstClick = true;
                         } else {
                             if (!firstClick) {
+                                if (handler != null){
+                                    handler.removeCallbacksAndMessages(null);
+                                }
+                                mRotationAnimation.setCurrentPlayTime(0);
                                 getActivity().onBackPressed();
                             }
                         }
@@ -155,11 +192,31 @@ public class DetailsFragment extends Fragment {
         });
     }
 
+    private void reverseAnimation() {
+        handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (startTime <= 0) {
+                    handler.removeCallbacksAndMessages(null);
+                }else {
+                    for (Animator a : animationSet.getChildAnimations()) {
+                        ((ObjectAnimator) a).setCurrentPlayTime(startTime -= 4);
+                    }
+                    handler.postDelayed(this, 15);
+                }
+            }
+        }, 0);
+    }
+
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+        if (handler != null){
+            handler.removeCallbacksAndMessages(null);
+        }
     }
 
 }

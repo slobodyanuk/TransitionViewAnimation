@@ -24,6 +24,8 @@ public class ClockArrowView extends View {
         this.mContainer = mContainer;
     }
 
+
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
