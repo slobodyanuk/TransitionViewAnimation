@@ -18,6 +18,9 @@ public class ClockArrowView extends View {
     private Paint mPaint = new Paint();
     private ViewGroup mContainer;
     private RotateAnimation rotate;
+    private Canvas mCanvas;
+    private int pivotX;
+    private int pivotY;
 
     public ClockArrowView(Context context, ViewGroup mContainer) {
         super(context);
@@ -29,9 +32,11 @@ public class ClockArrowView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
+        mCanvas = canvas;
         if (rotate == null){
-            createAnimation(canvas);
+            pivotX = mCanvas.getWidth() / 2;
+            pivotY = mCanvas.getHeight() / 2;
+            createAnimation();
         }
 
         int centerX = (int) (mContainer.getX() + mContainer.getWidth() / 2);
@@ -41,12 +46,12 @@ public class ClockArrowView extends View {
         mPaint.setColor(Color.BLACK);
         mPaint.setStyle(Paint.Style.STROKE);
         int radius = 25;
-        canvas.drawLine(centerX, centerY, centerX, (centerY - radius) + radius * 0.15f, mPaint);
+        mCanvas.drawLine(centerX, centerY, centerX, (centerY - radius) + radius * 0.15f, mPaint);
 
     }
 
-    private void createAnimation(Canvas canvas) {
-        rotate = new RotateAnimation(0, 360, canvas.getWidth() / 2, canvas.getHeight() / 2);
+    public RotateAnimation createAnimation() {
+        rotate = new RotateAnimation(0, 360, pivotX, pivotY);
         rotate.setRepeatMode(Animation.RESTART);
         rotate.setRepeatCount(Animation.INFINITE);
         rotate.setStartOffset(0);
@@ -54,6 +59,7 @@ public class ClockArrowView extends View {
         rotate.setInterpolator(new LinearInterpolator());
 
         startAnimation(rotate);
+        return rotate;
     }
 
 }

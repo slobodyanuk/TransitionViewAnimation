@@ -35,7 +35,10 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
 
     private ArrayList<String> mItems = new ArrayList<>();
     private static RecyclerManager manager;
+
     private static ItemListener mItemListener;
+    private static ItemAnimationListener mAnimationListener;
+
 
 
     public ListAdapter(RecyclerManager manager, int mSize, ItemListener mItemListener) {
@@ -56,6 +59,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
 
     @Override
     public void onBindViewHolder(final ListViewHolder holder, int position) {
+
         holder.title.setText(mItems.get(position));
         holder.root.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,6 +72,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
         shape.setColor(colors[position]);
     }
 
+    @Override
+    public void onViewAttachedToWindow(ListViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        holder.getSwipeAnimation().startAnimation();
+    }
 
     @Override
     public int getItemCount() {
@@ -108,6 +117,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
 
     public static class ListViewHolder extends RecyclerView.ViewHolder {
 
+        private ListSwipeAnimationUtil mSwipeAnimation;
+
         @BindView(R.id.root)
         public FrameLayout root;
         @BindView(R.id.item_container)
@@ -120,10 +131,19 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
         public ListViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
-            view.setOnTouchListener(new ListSwipeAnimationUtil(mItemListener, manager, this));
+            mSwipeAnimation = new ListSwipeAnimationUtil(mItemListener, manager, this);
+            view.setOnTouchListener(mSwipeAnimation);
+        }
+
+        private ListSwipeAnimationUtil getSwipeAnimation(){
+            return mSwipeAnimation;
         }
     }
 
     public interface ItemListener {
+    }
+
+    public interface ItemAnimationListener {
+        void onItemVisible(ListSwipeAnimationUtil swipeAnimation);
     }
 }

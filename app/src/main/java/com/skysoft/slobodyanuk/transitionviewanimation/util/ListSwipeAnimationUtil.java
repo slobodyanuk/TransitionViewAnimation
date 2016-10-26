@@ -110,23 +110,39 @@ public class ListSwipeAnimationUtil extends GestureDetector.SimpleOnGestureListe
                 break;
 
             case MotionEvent.ACTION_UP:
-                drawClockView();
-                if (animated) {
-                    smoothAnimation();
-                }
+                if (!clockDrawn) drawClockView();
+                if (animated) smoothAnimation();
                 break;
         }
         return true;
     }
 
-    private void drawClockView(){
-        if (endTime >= ANIMATION_SET_DURATION && !clockDrawn){
+    private void drawClockView() {
+        if (endTime >= ANIMATION_SET_DURATION && !clockDrawn) {
+            removeClockView();
             mClockArrowView = new ClockArrowView(mItemListener.getActivity(), mHideLeftLayout);
             mClockView = new ClockView(mItemListener.getActivity(), mHideLeftLayout);
             mHideLeftLayout.addView(mClockArrowView);
             mHideLeftLayout.addView(mClockView);
             clockDrawn = true;
+        } else {
+            removeClockView();
         }
+    }
+
+    private void removeClockView() {
+        if (mClockArrowView != null) {
+            mClockArrowView.clearAnimation();
+        }
+        mHideLeftLayout.removeAllViews();
+        clockDrawn = false;
+    }
+
+    public void startAnimation() {
+        if (startTime >= ANIMATION_SET_DURATION && mClockArrowView != null) {
+            mClockArrowView.createAnimation();
+        }
+
     }
 
     private void smoothAnimation() {
@@ -136,9 +152,10 @@ public class ListSwipeAnimationUtil extends GestureDetector.SimpleOnGestureListe
             public void run() {
                 if (startTime <= 0 || startTime >= ANIMATION_SET_DURATION) {
                     animated = false;
+                    clockDrawn = false;
                     manager.setScrollEnabled(true);
                     endTime = startTime;
-                    drawClockView();
+                    if (!clockDrawn) drawClockView();
                     handler.removeCallbacksAndMessages(null);
                 } else {
                     for (Animator a : mAnimatorSet.getChildAnimations()) {
