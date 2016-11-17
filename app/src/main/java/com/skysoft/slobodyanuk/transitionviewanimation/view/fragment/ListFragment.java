@@ -20,7 +20,7 @@ import butterknife.Unbinder;
 /**
  * Created by Serhii Slobodyanuk on 19.09.2016.
  */
-public class ListFragment extends Fragment implements ListAdapter.ItemListener {
+public class ListFragment extends Fragment  {
 
     @BindView(R.id.recycler)
     RecyclerView mRecyclerView;
@@ -45,9 +45,16 @@ public class ListFragment extends Fragment implements ListAdapter.ItemListener {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         RecyclerManager manager = new RecyclerManager(getActivity());
-        ListAdapter adapter = new ListAdapter(manager, 11, this);
+        ListAdapter adapter = new ListAdapter(manager, this, mRecyclerView);
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null, false,false));
+
+        // Fix blinks after update item in adapter
+//        RecyclerView.ItemAnimator animator = mRecyclerView.getItemAnimator();
+//        if (animator instanceof DefaultItemAnimator) {
+//            ((DefaultItemAnimator) animator).setSupportsChangeAnimations(false);
+//        }
+
         mRecyclerView.setLayoutManager(manager);
 
     }

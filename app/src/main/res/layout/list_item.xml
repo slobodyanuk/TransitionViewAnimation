@@ -5,43 +5,61 @@
     android:layout_height="68dp"
     android:clickable="true"
     android:focusable="true"
+    android:descendantFocusability="blocksDescendants"
     android:foreground="?android:attr/selectableItemBackground">
 
-    <RelativeLayout
+    <com.skysoft.slobodyanuk.transitionviewanimation.view.component.FoldingLayout
         android:layout_width="match_parent"
+        android:id="@+id/flip_container"
         android:layout_height="match_parent">
 
         <RelativeLayout
-            android:id="@+id/hide_container"
-            android:layout_width="80dp"
-            android:layout_marginLeft="-40dp"
-            android:rotationY="-90"
-            android:layout_height="match_parent"
-            android:background="@color/colorAccent"
-            android:orientation="horizontal" />
-
-        <LinearLayout
-            android:id="@+id/item_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_marginRight="-80dp"
-            android:layout_marginLeft="-40dp"
-            android:background="@drawable/round_background"
-            android:gravity="center_vertical"
-            android:layout_toEndOf="@+id/hide_container">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/title_item"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:text="@string/app_name"
-                android:textColor="@color/colorText"
-                android:textSize="18sp" />
+            <RelativeLayout
+                android:id="@+id/hide_container"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="-40dp"
+                android:background="@color/colorAccent"
+                android:orientation="horizontal"
+                android:rotationY="-90" />
 
-        </LinearLayout>
+            <RelativeLayout
+                android:id="@+id/hide_right_container"
+                android:layout_width="80dp"
+                android:layout_alignParentEnd="true"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="-40dp"
+                android:background="@color/colorAccent"
+                android:orientation="horizontal"
+                android:rotationY="-90" />
 
-    </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/item_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="-40dp"
+                android:layout_toEndOf="@+id/hide_container"
+                android:background="@drawable/round_background"
+                android:clickable="true"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/title_item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:text="@string/app_name"
+                    android:textColor="@color/colorText"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </com.skysoft.slobodyanuk.transitionviewanimation.view.component.FoldingLayout>
 
 </FrameLayout>
