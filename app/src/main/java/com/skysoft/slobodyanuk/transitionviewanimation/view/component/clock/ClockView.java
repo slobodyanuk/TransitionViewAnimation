@@ -1,4 +1,4 @@
-package com.skysoft.slobodyanuk.transitionviewanimation.view.component;
+package com.skysoft.slobodyanuk.transitionviewanimation.view.component.clock;
 
 import android.content.Context;
 import android.graphics.Canvas;

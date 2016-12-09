@@ -28,8 +28,8 @@ import com.skysoft.slobodyanuk.transitionviewanimation.util.OnSwipeTouchListener
 import com.skysoft.slobodyanuk.transitionviewanimation.util.RecyclerManager;
 import com.skysoft.slobodyanuk.transitionviewanimation.util.ValueInterpolator;
 import com.skysoft.slobodyanuk.transitionviewanimation.view.adapter.models.FoldItem;
-import com.skysoft.slobodyanuk.transitionviewanimation.view.component.ClockArrowView;
-import com.skysoft.slobodyanuk.transitionviewanimation.view.component.ClockView;
+import com.skysoft.slobodyanuk.transitionviewanimation.view.component.clock.ClockArrowView;
+import com.skysoft.slobodyanuk.transitionviewanimation.view.component.clock.ClockView;
 import com.skysoft.slobodyanuk.transitionviewanimation.view.component.FoldingLayout;
 import com.skysoft.slobodyanuk.transitionviewanimation.view.component.OnFoldListener;
 import com.skysoft.slobodyanuk.transitionviewanimation.view.component.OnSwipeListener;
