@@ -33,27 +33,20 @@ public class OnPhoneTouchListener implements View.OnTouchListener {
                 touchY = event.getY();
                 if (mPhoneState.getCircleDrawable().isTouched(touchX, touchY)) {
                     allowDraw = true;
+                    mPhoneState.setMove(false);
                     mSurfaceViewThread.setRunning(true);
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (allowDraw) {
-//                    mSurfaceViewThread.setRunning(true);
-
-//                    mShiftDistance = event.getX() - touchX;
-//                    mPhoneState.setShiftCircleX(mShiftDistance);
-//
-//                    mShiftDistance = event.getY() - touchY;
-//                    mPhoneState.setShiftCircleY(mShiftDistance);
                     mPhoneState.getCircleDrawable().offset(event.getX() - touchX, event.getY() - touchY);
-
+                    mPhoneState.getCircleDrawable().checkRectRoundBorder();
                     touchX = event.getX();
                     touchY = event.getY();
-
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                mSurfaceViewThread.setRunning(false);
+                mPhoneState.setMove(true);
                 allowDraw = false;
                 break;
         }

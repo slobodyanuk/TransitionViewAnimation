@@ -8,9 +8,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.skysoft.slobodyanuk.transitionviewanimation.data.PhoneState;
+import com.skysoft.slobodyanuk.transitionviewanimation.util.MathUtils;
 import com.skysoft.slobodyanuk.transitionviewanimation.view.component.Drawable;
-
-import static com.skysoft.slobodyanuk.transitionviewanimation.view.component.ViewConstants.RECT_HEIGHT_PADDING;
 
 /**
  * Created by Sergiy on 08.12.2016.
@@ -18,13 +17,14 @@ import static com.skysoft.slobodyanuk.transitionviewanimation.view.component.Vie
 
 public class PhoneCircle implements Drawable {
 
-    private int mWidth;
-    private int mHeight;
+    private final int color;
     private Paint mPaint = new Paint();
     private Bitmap mIconCall;
     private PhoneState mState;
 
     private float centerX;
+    private float initCenterX;
+    private float initCenterY;
     private float centerBitmapX;
     private float centerY;
     private float centerBitmapY;
@@ -32,28 +32,33 @@ public class PhoneCircle implements Drawable {
     private float radius;
 
     public PhoneCircle(Context context, int mWidth, int mHeight, PhoneState state) {
-        this.mWidth = mWidth;
-        this.mHeight = mHeight;
         this.mState = state;
 
+        color = Color.parseColor("#016fff");
         radius = mHeight / 3;
         mIconCall = BitmapFactory.decodeResource(context.getApplicationContext().getResources(),
                 android.R.drawable.ic_menu_call);
 
-        setCenterX(mWidth / 2);
-        setCenterY(
-                mHeight * RECT_HEIGHT_PADDING / 2);
+        initCenterX = mWidth / 2;
+        initCenterY = mHeight / 2;
+
+        setCenterX(initCenterX);
+        setCenterY(initCenterY);
     }
 
     @Override
     public void draw(Canvas canvas) {
-        mPaint.setColor(Color.parseColor("#016fff"));
+        mPaint.setColor(color);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setAntiAlias(true);
 
         canvas.drawCircle(centerX, centerY, radius, mPaint);
 
         canvas.drawBitmap(mIconCall, centerBitmapX, centerBitmapY, mPaint);
+
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setColor(Color.RED);
+
     }
 
     public boolean isTouched(float xTouch, float yTouch) {
@@ -62,10 +67,30 @@ public class PhoneCircle implements Drawable {
     }
 
     public void offset(float x, float y) {
-        centerX += x;
         centerY += y;
-        centerBitmapX += x;
         centerBitmapY += y;
+        centerX += x;
+        centerBitmapX += x;
+    }
+
+    public void checkRectRoundBorder() {
+        if (MathUtils.hasTouchPoint(centerX, centerY,
+                mState.getRectView(), getRadius())) {
+
+            double[] mTouchPoints = MathUtils.getTouchPoints(centerX, centerY,
+                    mState.getRectView(), getRadius());
+
+            setCenterX((float) mTouchPoints[0]);
+            setCenterY((float) mTouchPoints[1]);
+        }
+    }
+
+    public float getInitCenterX() {
+        return initCenterX;
+    }
+
+    public float getInitCenterY() {
+        return initCenterY;
     }
 
     public float getCenterX() {

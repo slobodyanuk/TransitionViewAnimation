@@ -6,10 +6,10 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import com.skysoft.slobodyanuk.transitionviewanimation.util.MathUtils;
 import com.skysoft.slobodyanuk.transitionviewanimation.view.component.Drawable;
 
 import static com.skysoft.slobodyanuk.transitionviewanimation.view.component.ViewConstants.RECT_CONTAINER_RADIUS;
-import static com.skysoft.slobodyanuk.transitionviewanimation.view.component.ViewConstants.RECT_HEIGHT_PADDING;
 import static com.skysoft.slobodyanuk.transitionviewanimation.view.component.ViewConstants.RECT_WIDTH_PADDING;
 
 /**
@@ -20,15 +20,20 @@ public class RectContainer implements Drawable {
     private int mWidth;
     private int mHeight;
 
-    private int top;
-    private int bottom;
-    private int left;
-    private int right;
+    public int top;
+    public int bottom;
+    public int left;
+    public int right;
 
-    private float roundX;
-    private int roundY;
+    private float radius;
+    private double radiusLength;
+    private float leftCenterX;
+    private float rightCenterX;
+    private float centerY;
 
     private Paint mPaint = new Paint();
+    private int color;
+    private RectF rectF;
 
     public RectContainer(int mWidth, int mHeight) {
         this.mWidth = mWidth;
@@ -40,21 +45,44 @@ public class RectContainer implements Drawable {
         left = RECT_WIDTH_PADDING;
         top = 0;
         right = mWidth - RECT_WIDTH_PADDING;
-        bottom = (int) (mHeight * RECT_HEIGHT_PADDING);
-        roundX = mWidth * RECT_CONTAINER_RADIUS;
-        roundY = mHeight / 2;
+        bottom = mHeight;
+        radius = (mWidth - RECT_WIDTH_PADDING)* RECT_CONTAINER_RADIUS ;
+        color = Color.parseColor("#1Affffff");
+
+        radiusLength = MathUtils.calcDistance(mWidth - radius - RECT_WIDTH_PADDING, getCenterY(), right, getCenterY());
+        centerY = mHeight / 2;
+        leftCenterX = radius + RECT_WIDTH_PADDING;
+        rightCenterX = mWidth - radius - RECT_WIDTH_PADDING;
+
+        Rect rect = new Rect(left, top, right, bottom);
+        rectF = new RectF(rect);
     }
 
     @Override
     public void draw(Canvas canvas) {
-        mPaint.setColor(Color.parseColor("#1Affffff"));
+        mPaint.setColor(color);
         mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         mPaint.setAntiAlias(true);
+        canvas.drawRoundRect(rectF, radius, radius, mPaint);
+    }
 
-        Rect rect = new Rect(left, top, right, bottom);
+    public float getRightCenterX(){
+        return rightCenterX;
+    }
 
-        RectF rectF = new RectF(rect);
+    public float getLeftCenterX(){
+        return leftCenterX;
+    }
 
-        canvas.drawRoundRect(rectF, roundX, roundY, mPaint);
+    public float getCenterY(){
+        return centerY;
+    }
+
+    public float getRadius(){
+        return radius;
+    }
+
+    public double getRadiusLength(){
+        return radiusLength;
     }
 }

@@ -10,7 +10,6 @@ import android.view.SurfaceView;
 import com.skysoft.slobodyanuk.transitionviewanimation.data.PhoneState;
 import com.skysoft.slobodyanuk.transitionviewanimation.manager.SurfaceViewThread;
 import com.skysoft.slobodyanuk.transitionviewanimation.util.OnPhoneTouchListener;
-import com.skysoft.slobodyanuk.transitionviewanimation.view.component.Drawable;
 
 /**
  * Created by Sergiy on 08.12.2016.
@@ -50,7 +49,7 @@ public class PhoneSurfaceView extends SurfaceView implements SurfaceHolder.Callb
         setZOrderOnTop(true);
     }
 
-    private void initSurfaceView(){
+    private void initSurfaceView() {
         mPhoneState = new PhoneState(context, this);
 
         mSurfaceViewThread = new SurfaceViewThread(this);
@@ -61,13 +60,16 @@ public class PhoneSurfaceView extends SurfaceView implements SurfaceHolder.Callb
         setOnTouchListener(mPhoneTouchListener);
     }
 
-
     public void draw(Canvas canvas) {
         if (mPhoneState != null) {
-            for (Drawable drawable : mPhoneState.getDrawables()) {
-                drawable.draw(canvas);
+            for (int i = 0; i < mPhoneState.getDrawables().size(); i++) {
+                mPhoneState.getDrawables().get(i).draw(canvas);
             }
         }
+    }
+
+    public void move(long delta){
+        mPhoneState.calculateCircleMove(delta);
     }
 
     @Override
